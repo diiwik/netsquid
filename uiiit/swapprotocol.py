@@ -2,6 +2,7 @@
 """
 
 import logging
+import re
 
 import netsquid as ns
 from netsquid.protocols import NodeProtocol, Protocol, Signals
@@ -149,14 +150,15 @@ class SwapProtocol(NodeProtocol):
             # Create an event triggered when ALL the memory ports
             # receive a qubit: note that also lost qubits will trigger
             # such an event notification
-            qevent = None
+            in_qevent = None
             for port in self._qmem.ports:
                 if port in ["qin", "qout"]:
                     continue
-                if qevent is None:
-                    qevent = self.await_port_input(self._qmem.ports[port])
-                else:
-                    qevent &= self.await_port_input(self._qmem.ports[port])
+                elif re.match(r"^qin\d+$", port):
+                    if in_qevent is None:
+                        in_qevent = self.await_port_input(self._qmem.ports[port])
+                    else:
+                        in_qevent &= self.await_port_input(self._qmem.ports[port])
 
             # Create an event triggered when ANY of the classical channel
             # connections receives a message
@@ -170,14 +172,14 @@ class SwapProtocol(NodeProtocol):
             # Wait until any of the events happen
             if qprog_exec:
                 expression = (
-                    yield qevent
+                    yield in_qevent
                     | cevent
                     | self.await_program(
                         self.node.qmemory, await_done=True, await_fail=True
                     )
                 )
             else:
-                expression = yield qevent | cevent
+                expression = yield in_qevent | cevent
 
             qports_done = False
             for ev in expression.triggered_events:
