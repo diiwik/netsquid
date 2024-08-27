@@ -110,7 +110,7 @@ class SwapProtocol(NodeProtocol):
         The oracle.
 
     """
-    _bsm_op_indices = [(0, 0), (0, 1), (1, 0), (1, 1)]
+    _bsm_op_indices = [(0, 0), (0, 1), (1, 1), (1, 0)]
 
     def __init__(self, name, node, oracle):
         super().__init__(node, name)
