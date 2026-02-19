@@ -71,3 +71,10 @@ for channel_model in channel_models:
             channel_model, ",".join([f"{x:.2f}" for x in delays])
         )
     )
+
+#a fun that stimulates a channel
+  ###1-takes type and run_id as inp
+    #2-set randomness for gausial and ns
+    #3-create channel
+    #4-send message
+    #5-get and return delay
