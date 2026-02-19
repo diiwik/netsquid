@@ -50,9 +50,9 @@ def single_run(channel_model, run_id):
 
     channel.send("hi")
     stats = ns.sim_run()
-
+    #returns data and delay
     __, delay = channel.receive()
-
+   #tool for printing info about code
     logging.info(stats)
     return delay
 
